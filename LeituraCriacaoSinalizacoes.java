@@ -40,51 +40,57 @@ public class LeituraCriacaoSinalizacoes {
         // Mude numLinhas para algum numero pequeno para executar testes mais
         // rapidamente.
         // Ex:
-        for (int i = 0; i < 50; i++) {
-            // for (int i = 0; i < numLinhas; i++) {
-            String[] campos = linhas[i].split(";");
+        // for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < numLinhas; i++) {
+            try {
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+                String[] campos = linhas[i].split(";");
 
-            String descricao = campos[1];
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
 
-            int anoImplantacao = 0;
-            int mesImplantacao = 0;
-            int diaImplantacao = 0;
-            if (!campos[4].equals("")) {
-                if (campos[4].contains("-"))
-                    formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                String descricao = campos[1];
+
+                int anoImplantacao = 0;
+                int mesImplantacao = 0;
+                int diaImplantacao = 0;
+                if (!campos[4].equals("")) {
+                    if (campos[4].contains("-"))
+                        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    else
+                        formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    LocalDate date = LocalDate.parse(campos[4], formatter);
+                    anoImplantacao = date.getYear();
+                    mesImplantacao = date.getMonthValue();
+                    diaImplantacao = date.getDayOfMonth();
+                }
+
+                String nomeLogradouro = campos[5];
+
+                double numInicial;
+                if (campos[6].equals(""))
+                    numInicial = 0;
                 else
-                    formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                LocalDate date = LocalDate.parse(campos[4], formatter);
-                anoImplantacao = date.getYear();
-                mesImplantacao = date.getMonthValue();
-                diaImplantacao = date.getDayOfMonth();
+                    numInicial = Double.parseDouble(campos[6]);
+
+                double numFinal;
+                if (campos[7].equals(""))
+                    numFinal = 0;
+                else
+                    numFinal = Double.parseDouble(campos[7]);
+
+                String lado = campos[10];
+                String localInstalacao = "";
+                if (campos.length >= 13)
+                    localInstalacao = campos[12];
+
+                Sinalizacao novaSinalizacao = new Sinalizacao(descricao, diaImplantacao, mesImplantacao, anoImplantacao,
+                        numInicial, numFinal, lado, localInstalacao);
+
+                listaLogradouros.orderedAdd(nomeLogradouro, novaSinalizacao);
+            } catch (Exception e) {
+                System.out.println("Valores inválidos na linha " + (i + 2) + " ,pulando linha");
             }
 
-            String nomeLogradouro = campos[5];
-
-            double numInicial;
-            if (campos[6].equals(""))
-                numInicial = 0;
-            else
-                numInicial = Double.parseDouble(campos[6]);
-
-            double numFinal;
-            if (campos[7].equals(""))
-                numFinal = 0;
-            else
-                numFinal = Double.parseDouble(campos[7]);
-
-            String lado = campos[10];
-            String localInstalacao = "";
-            if (campos.length >= 13)
-                localInstalacao = campos[12];
-
-            Sinalizacao novaSinalizacao = new Sinalizacao(descricao, diaImplantacao, mesImplantacao, anoImplantacao,
-                    numInicial, numFinal, lado, localInstalacao);
-
-            listaLogradouros.orderedAdd(nomeLogradouro, novaSinalizacao);
         }
     }
 
